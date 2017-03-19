@@ -1,0 +1,11 @@
+# Report
+*.doc
+*.docx
+
+#Intellij
+.idea
+
+# Visual Studio
+*.user
+ipch
+Debug
