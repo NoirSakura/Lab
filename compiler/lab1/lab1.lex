@@ -25,8 +25,10 @@
 #define REAL8 20
 #define REAL16 21
 #define IDN 22
-
-int dec_num;
+#define ILLEGALINT8 23
+#define ILLEGALINT16 24
+#define ILLEGALREAL8 25
+#define ILLEGALREAL16 26
 
 %}
 DELIM [" "\n\t]
@@ -36,14 +38,18 @@ DIGIT	[0-9]
 IDN		{LETTER}({LETTER}|{DIGIT})*
 INT10	0|[1-9]{DIGIT}*	
 INT8	0[0-7]+
-INT16	0("x"|"X")({DIGIT}|[a-fA-F])+
-REAL10	{INT10}"."{DIGIT}+
-REAL8	{INT8}"."[0-7][0-7]+
-REAL16	{INT16}"."({DIGIT}|[a-fA-F])({DIGIT}|[a-fA-F])+
+ILLEGALINT8 ({INT8}|"0")([89a-wyzA-WYZ])({LETTER}|{DIGIT})*
+INT16	0[xX](0|([1-9]|[a-fA-F])({DIGIT}|[a-fA-F])*)
+ILLEGALINT16 ({INT16}|(0[xX]))[g-zG-Z]({LETTER}|{DIGIT})*
+REAL10	{INT10}"."{DIGIT}*
+REAL8	{INT8}"."[0-7]*
+REAL16	{INT16}"."({DIGIT}|[a-fA-F])*
+ILLEGALREAL8 ({ILLEGALINT8}"."({LETTER}|{DIGIT})*)|({REAL8}[89a-wyzA-WYZ]({LETTER}|{DIGIT})*)|({INT8}"."[89a-wyzA-WYZ]({LETTER}|{DIGIT})*)
+ILLEGALREAL16 (({ILLEGALINT16}|(0[xX]))"."({LETTER}|{DIGIT})*)|({REAL16}[g-zG-Z]({LETTER}|{DIGIT})*)|({INT16}"."[g-zG-Z]({LETTER}|{DIGIT})*)
+
 %%
-{WHITESPACE} {}
 "if"  {return IF;} 
-"then"  {return THEN;} 
+"then" {return THEN;} 
 "else"  {return ELSE;} 
 "while"  {return WHILE;} 
 "do"  {return DO;} 
@@ -65,6 +71,10 @@ REAL16	{INT16}"."({DIGIT}|[a-fA-F])({DIGIT}|[a-fA-F])+
 {REAL10}  {return REAL10;} 
 {REAL16}  {return REAL16;} 
 {IDN} {return IDN;}
+{ILLEGALINT8} {return ILLEGALINT8;}
+{ILLEGALINT16} {return ILLEGALINT16;}
+{ILLEGALREAL8} {return ILLEGALREAL8;}
+{ILLEGALREAL16} {return ILLEGALINT16;}
 
 %%
 void main()   
@@ -124,10 +134,10 @@ void main()
 				printf("INT10\t%d\n",atoi(yytext));
 				break;
 			case INT8:
-				printf("INT8\t%d\n",strtol(yytext,NULL,8));
+				printf("INT8\t%ld\n",strtol(yytext,NULL,8));
 				break;
 			case INT16:
-				printf("INT16\t%d\n",strtol(yytext,NULL,16));
+				printf("INT16\t%ld\n",strtol(yytext,NULL,16));
 				break;
 			case REAL10:
 				printf("REAL10\t%f\n",atof(yytext));
@@ -141,14 +151,24 @@ void main()
 			case IDN:
 				printf("IDN\t%s\n",yytext);
 				break;
+			case ILLEGALINT8:
+				printf("ILLEGALINT8\t%s\n",yytext);
+				break;
+			case ILLEGALINT16:
+				printf("ILLEGALINT16\t%s\n",yytext);
+				break;
+			case ILLEGALREAL8:
+				printf("ILLEGALREAL8\t%s\n",yytext);
+				break;
+			case ILLEGALREAL16:
+				printf("ILLEGALREAL16\t%s\n",yytext);
+				break;
 			case END:
 				flag = 0;
 				break;
 		}
 	}
     fclose(yyin);
-	system("pause");
 } 
-  
-int yywrap(){return 1;}
 
+int yywrap(){return 1;}

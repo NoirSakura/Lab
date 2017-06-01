@@ -1,0 +1,28 @@
+0	:	P
+1	:	L P 	
+2	:	S ; 	L 	
+3	:	while C do S 	S ; 	
+4	:	E > E 	if C then S 	IDN = E 	
+5	:	T 	T 	E = E 	while C do S 	E + T 	
+6	:	F 	F 	T 	T 	E < E 	IDN = E 	T 	
+7	:	( E ) 	INT16 	F 	F 	T 	T 	T 	
+8	:	E + T 	IDN 	INT8 	F 	F 	T / F 	
+9	:	T 	F 	IDN 	IDN 	T * F 	IDN 	
+10	:	F 	INT10 	F 	IDN 	
+11	:	IDN 	IDN 	
+12	:	
+L1:	t1 := a3 + 15
+	if t1 > 10 goto L2
+	goto L0
+L2:	if x2 = 7 goto L3
+	goto L1
+L3:	if y < z goto L4
+	goto L1
+L4:	t2 := x * y
+	t3 := t2 / z
+	y := t3
+	goto L3
+	goto L1
+L0:	t4 := b * c
+	t5 := t4 + d
+	c := t5
